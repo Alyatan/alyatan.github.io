@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => console.log('Service Worker registrado:', registration))
+                .catch(error => console.error('Falha ao registrar o Service Worker:', error));
+        }
+</script>
 </head>
     <link rel="shortcut icon" type="imagex/png" href="/img/sportv.ico">
     <body style="background-color: rgb(0, 0, 14);">
