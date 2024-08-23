@@ -13,7 +13,6 @@
         <h1>SporTV</h1>
         <iframe
             title="SporTV"
-            style="pointer-events: none;"
             src="https://meuplayeronlinehd.com/myplay/watch.html?id=sportv"
             allow="encrypted-media"
             allowfullscreen
@@ -62,6 +61,24 @@
             width="920"
             height="518">
         </iframe>
+        <script>
+            const iframe = document.getElementById('videoFrame');
+
+                iframe.onload = function() {
+                        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+                                // Adiciona um listener para capturar cliques
+                                        iframeDocument.addEventListener('click', function(event) {
+                                                    const clickedElement = event.target;
+
+                                                                // Verifica se o elemento clicado é um link ou algo que pode redirecionar
+                                                                            if (clickedElement.tagName === 'A' || clickedElement.closest('a')) {
+                                                                                            event.preventDefault(); // Bloqueia o redirecionamento
+                                                                                                            console.log('Redirecionamento bloqueado.');
+                                                                                                                        }
+                                                                                                                                });
+                                                                                                                                    };
+                                                                                                                                    </script>
         </div>
     </body>
 </html>
