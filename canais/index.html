@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Player de Canais</title>
+<link rel="shortcut icon" type="imagex/png" href="icons/sportv.ico">
+<link rel="stylesheet" href="css/styles.css">
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/js/service-worker.js')
+            .then(registration => console.log('Service Worker registrado com sucesso:', registration))
+            .catch(error => console.error('Falha ao registrar o Service Worker:', error));
+    }
+</script>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="channel-menu">
+      <div class="menu-trigger">
+        <img src="icons/espn.ico" alt="ESPN Logo" class="menu-icon">
+        <span>ESPN</span>
+      </div>
+      <div class="channels-dropdown">
+          <div class="channel-group">
+              <div class="group-title">ESPN</div>
+              <div class="button-grid">
+                <button class="channel-btn active" data-channel="espn" data-name="ESPN">ESPN</button>
+                <button class="channel-btn" data-channel="espn2" data-name="ESPN 2">ESPN 2</button>
+                <button class="channel-btn" data-channel="espn3" data-name="ESPN 3">ESPN 3</button>
+                <button class="channel-btn" data-channel="espn4" data-name="ESPN 4">ESPN 4</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="channel-menu">
+      <div class="menu-trigger">
+        <img src="icons/sportv.ico" alt="SporTV Logo" class="menu-icon">
+        <span>SporTV</span>
+      </div>
+      <div class="channels-dropdown">
+          <div class="channel-group">
+              <div class="group-title">SporTV</div>
+              <div class="button-grid">
+                <button class="channel-btn" data-channel="sportv" data-name="SporTV">SporTV</button>
+                <button class="channel-btn" data-channel="sportv2" data-name="SporTV 2">SporTV 2</button>
+                <button class="channel-btn" data-channel="sportv3" data-name="SporTV 3">SporTV 3</button>
+                <button class="channel-btn" data-channel="sportv4" data-name="SporTV 4">SporTV 4</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="channel-menu">
+      <div class="menu-trigger">
+        <img src="icons/premiere.ico" alt="Premiere Logo" class="menu-icon">
+        <span>Premiere</span>
+      </div>
+      <div class="channels-dropdown">
+          <div class="channel-group">
+              <div class="group-title">Premiere</div>
+              <div class="button-grid">
+                <button class="channel-btn" data-channel="premiere" data-name="PREMIERE Clubes">Premiere Clubes</button>
+                <button class="channel-btn" data-channel="premiere2" data-name="PREMIERE 2">Premiere 2</button>
+                <button class="channel-btn" data-channel="premiere3" data-name="PREMIERE 3">Premiere 3</button>
+                <button class="channel-btn" data-channel="premiere4" data-name="PREMIERE 4">Premiere 4</button>
+              </div>
+          </div>
+      </div>
+    </div>
+  </header>
+  
+  <main class="player-fullscreen-wrapper">
+    <iframe 
+      id="videoFrame" 
+      src="https://meuplayeronlinehd.com/myplay/watch.html?id=espn"
+      height="200"
+      width="300"
+      allow="autoplay; fullscreen; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </main>
+
+<script>
+  const iframe = document.getElementById('videoFrame');
+  const channelButtons = document.querySelectorAll('.channel-btn');
+  const baseUrl = 'https://meuplayeronlinehd.com/myplay/watch.html?id=';
+  
+  function trocarVideo(channelId, channelName, save = true) {
+    iframe.classList.add('fade');
+    setTimeout(() => {
+      iframe.src = baseUrl + channelId;
+      iframe.classList.remove('fade');
+    }, 300);
+    
+    channelButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.channel === channelId);
+    });
+    
+    if (save) {
+      localStorage.setItem('last_channel_watched', JSON.stringify({ id: channelId, name: channelName }));
+    }
+  }
+  
+  channelButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      trocarVideo(button.dataset.channel, button.dataset.name);
+    });
+  });
+
+  function loadLastChannel() {
+    const savedChannel = localStorage.getItem('last_channel_watched');
+    if (savedChannel) {
+      const channel = JSON.parse(savedChannel);
+      trocarVideo(channel.id, channel.name, false);
+    } else {
+      trocarVideo('espn', 'ESPN', false);
+    }
+  }
+
+  iframe.onload = function() {
+    try {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      iframeDocument.addEventListener('click', function(event) {
+        if (event.target.tagName === 'A' || event.target.closest('a')) {
+          event.preventDefault();
+          console.log('Redirecionamento dentro do player foi bloqueado.');
+        }
+      }, true);
+    } catch (e) {
+      console.warn("Não foi possível adicionar o bloqueador de cliques ao iframe devido à política de mesma origem (cross-origin).", e);
+    }
+  };
+
+  window.addEventListener('load', loadLastChannel);
+</script>
+</body>
+</html>
